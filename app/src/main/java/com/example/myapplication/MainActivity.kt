@@ -20,8 +20,6 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.flask.colorpicker.ColorPickerView
-import com.flask.colorpicker.builder.ColorPickerDialogBuilder
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
@@ -29,7 +27,7 @@ import java.io.OutputStream
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var customView: CustomView
+    private lateinit var customView: CustomCropVuong
     private var originalBitmap: Bitmap? = null
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -48,6 +46,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         customView = findViewById(R.id.drawing_view)
 
+        val saveCroppedImageButton = findViewById<Button>(R.id.btnUndo)
+        saveCroppedImageButton.setOnClickListener {
+            val croppedBitmap = customView.getCroppedBitmap()
+            saveImageToGallery(croppedBitmap, this)
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             checkAndRequestPermissions(
@@ -67,33 +70,16 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, MainActivity2::class.java))
         }
 
-        val brushSizeSeekBar = findViewById<SeekBar>(R.id.brush_size_seekbar)
-        brushSizeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                customView.setBrushSize(progress.toFloat())
-            }
+//        val brushSizeSeekBar = findViewById<SeekBar>(R.id.brush_size_seekbar)
+//        brushSizeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+//            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+//                customView.setBrushSize(progress.toFloat())
+//            }
+//
+//            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+//            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+//        })
 
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-        })
-        val colorPickerButton = findViewById<Button>(R.id.btn_color_picker)
-        colorPickerButton.setOnClickListener {
-            ColorPickerDialogBuilder
-                .with(this)
-                .setTitle("Chọn Màu")
-                .initialColor(customView.drawPaint.color)
-                .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
-                .density(12)
-                .setOnColorSelectedListener { selectedColor ->
-                    customView.setBrushColor(selectedColor)
-                }
-                .setPositiveButton("OK") { _, selectedColor, _ ->
-                    customView.setBrushColor(selectedColor)
-                }
-                .setNegativeButton("Hủy", null)
-                .build()
-                .show()
-        }
 
 
         val uploadImageButton = findViewById<Button>(R.id.btn_upload_image)
@@ -103,25 +89,25 @@ class MainActivity : AppCompatActivity() {
         }
 
         val saveImageButton = findViewById<Button>(R.id.btn_clear_all)
-        saveImageButton.setOnClickListener {
-            customView.erase()
-        }
-
-        val zoomInButton = findViewById<ImageView>(R.id.imgPlus)
-        val zoomOutButton = findViewById<ImageView>(R.id.imgMinus)
-
-        zoomInButton.setOnClickListener {
-            customView.zoomIn()
-        }
-
-        zoomOutButton.setOnClickListener {
-            customView.zoomOut()
-        }
-        val btnUndo = findViewById<Button>(R.id.btnUndo)
-        btnUndo.setOnClickListener {
-            customView.undo()
-
-        }
+//        saveImageButton.setOnClickListener {
+//            customView.erase()
+//        }
+//
+//        val zoomInButton = findViewById<ImageView>(R.id.imgPlus)
+//        val zoomOutButton = findViewById<ImageView>(R.id.imgMinus)
+//
+//        zoomInButton.setOnClickListener {
+//            customView.zoomIn()
+//        }
+//
+//        zoomOutButton.setOnClickListener {
+//            customView.zoomOut()
+//        }
+//        val btnUndo = findViewById<Button>(R.id.btnUndo)
+//        btnUndo.setOnClickListener {
+//            customView.undo()
+//
+//        }
 
 
         val imgBack = findViewById<ImageView>(R.id.imgBack)
@@ -129,25 +115,24 @@ class MainActivity : AppCompatActivity() {
         val imgUp = findViewById<ImageView>(R.id.imgUp)
         val imgDown = findViewById<ImageView>(R.id.imgDown)
 
-
-        imgBack.setOnClickListener {
-            customView.translateImage(-10f, 0f)
-        }
-
-        imgNext.setOnClickListener {
-            customView.translateImage(10f, 0f)
-        }
-
-        imgUp.setOnClickListener {
-            customView.translateImage(0f, -10f)
-        }
-
-        imgDown.setOnClickListener {
-            customView.translateImage(0f, 10f)
-        }
+//
+//        imgBack.setOnClickListener {
+//            customView.translateImage(-10f, 0f)
+//        }
+//
+//        imgNext.setOnClickListener {
+//            customView.translateImage(10f, 0f)
+//        }
+//
+//        imgUp.setOnClickListener {
+//            customView.translateImage(0f, -10f)
+//        }
+//
+//        imgDown.setOnClickListener {
+//            customView.translateImage(0f, 10f)
+//        }
 
     }
-
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -156,17 +141,34 @@ class MainActivity : AppCompatActivity() {
                 try {
                     val inputStream: InputStream? = contentResolver.openInputStream(uri)
                     val bitmap = BitmapFactory.decodeStream(inputStream)
-//                    customView.setBackgroundImage(bitmap)
-                    customView.clearCanvas()
-
                     originalBitmap = bitmap
-                    customView.setBackgroundImage(bitmap)
+                    customView.setImageBitmap(bitmap) // Hiển thị ảnh lên view
                 } catch (e: Exception) {
                     e.printStackTrace()
+                    Toast.makeText(this, "Error loading image", Toast.LENGTH_SHORT).show()
                 }
             }
         }
     }
+
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        super.onActivityResult(requestCode, resultCode, data)
+//        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK) {
+//            data?.data?.let { uri ->
+//                try {
+//                    val inputStream: InputStream? = contentResolver.openInputStream(uri)
+//                    val bitmap = BitmapFactory.decodeStream(inputStream)
+////                    customView.setBackgroundImage(bitmap)
+////                    customView.clearCanvas()
+//
+//                    originalBitmap = bitmap
+////                    customView.setBackgroundImage(bitmap)
+//                } catch (e: Exception) {
+//                    e.printStackTrace()
+//                }
+//            }
+//        }
+//    }
 
     private fun checkAndRequestPermissions(vararg permissions: String) {
         val permissionsToRequest = permissions.filter {

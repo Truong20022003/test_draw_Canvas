@@ -47,7 +47,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/buttons_layout3"
+        app:layout_constraintBottom_toTopOf="@+id/brush_size_seekbar3"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
 
@@ -70,7 +70,15 @@
             android:text="Tẩy" />
 
     </LinearLayout>
-
+    <SeekBar
+        android:id="@+id/brush_size_seekbar3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:max="50"
+        android:progress="10"
+        app:layout_constraintBottom_toTopOf="@+id/buttons_layout3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
     <LinearLayout
         android:id="@+id/buttons_layout3"
         android:layout_width="wrap_content"
@@ -81,21 +89,24 @@
         app:layout_constraintEnd_toEndOf="parent"
        >
         <Button
-            android:id="@+id/btn_upLoadImage3"
+            android:id="@+id/btnChangeSize"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Chọn nền" />
+            android:text="Change size" />
         <Button
-            android:id="@+id/btn_chooseColor"
+            android:id="@+id/btn_chooseColo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Chọn màu" />
 
         <Button
-            android:id="@+id/btn_earser"
+            android:id="@+id/btn_earse"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Tẩy" />
 
     </LinearLayout>
+
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

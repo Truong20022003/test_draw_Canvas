@@ -67,10 +67,10 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.example.myapplication.CustomView
+        <com.example.myapplication.CustomCropVuong
             android:id="@+id/drawing_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="500dp"
             android:layout_marginHorizontal="30dp"
             android:background="@android:color/transparent"
             app:layout_constraintBottom_toTopOf="@+id/imgDown"

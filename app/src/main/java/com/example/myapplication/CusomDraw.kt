@@ -12,7 +12,6 @@ class CusomDraw(context: Context, attrs: AttributeSet?) : View(context, attrs) {
 
     private val path = Path()
     private var paint: Paint = Paint()
-    private var backgroundBitmap: Bitmap? = null
     private var drawingBitmap: Bitmap? = null
     private var drawingCanvas: Canvas? = null
     private var drawRect: RectF? = null
@@ -33,14 +32,17 @@ class CusomDraw(context: Context, attrs: AttributeSet?) : View(context, attrs) {
 
     init {
         paint.isAntiAlias = true
-        paint.strokeWidth = 40f
+        paint.strokeWidth = 27.5f
         paint.style = Paint.Style.STROKE
         paint.strokeCap = Paint.Cap.ROUND
         paint.strokeJoin = Paint.Join.ROUND
         paint.color = selectedColor
         setBrushStyle(brushType)
     }
-
+    fun setStrokeWidth(strokeWidth: Float) {
+        paint.strokeWidth = strokeWidth
+        invalidate()
+    }
     private fun createTextureFromImage(selectedColor: Int): Bitmap {
         val bitmapSize = 100
         val bitmap = Bitmap.createBitmap(bitmapSize, bitmapSize, Bitmap.Config.ARGB_8888)
@@ -107,9 +109,6 @@ class CusomDraw(context: Context, attrs: AttributeSet?) : View(context, attrs) {
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        backgroundBitmap?.let {
-            canvas.drawBitmap(it, 0f, 0f, null)
-        }
         drawingBitmap?.let {
             canvas.drawBitmap(it, 0f, 0f, null)
         }
@@ -168,11 +167,6 @@ class CusomDraw(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         return true
     }
 
-    fun loadBackgroundImage(uri: Uri) {
-        val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
-        backgroundBitmap = BitmapFactory.decodeStream(inputStream)
-        invalidate()
-    }
 
     fun erase() {
         paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
